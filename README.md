@@ -182,6 +182,16 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
+@greyisheep Added Feature
+
+## Developer Memory (Context Recall Across Sessions)
+Allow users to resume conversations later, referencing past sessions and queries.
+
+**Benefits:**
+Feels like talking to a personal AI dev assistant
+
+Boosts productivity for large docs/projects
+
 **Built with ❤️ for developers who deserve better documentation experiences**
 
 *Transform your documentation from static pages to interactive conversations with Docugent! 🚀✨* 
