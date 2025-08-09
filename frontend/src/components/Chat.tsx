@@ -1,4 +1,4 @@
-import { FiMenu, FiSend } from 'react-icons/fi';
+
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import TypingIndicator from './TypingIndicator';
@@ -7,6 +7,7 @@ import styles from './Chat.module.css';
 import type { Message,ChatProps,HandleSendType } from '../../types/DataTypes'
 import Header from './sub-components/Header';
 import WelcomePromptSuggestions from './sub-components/WelcomePromptSuggestions';
+import InputArea from './sub-components/InputArea';
 
 
 const Chat: React.FC<ChatProps> = ({ onMenuClick, resetSignal }) => {
@@ -198,20 +199,7 @@ const Chat: React.FC<ChatProps> = ({ onMenuClick, resetSignal }) => {
           <div ref={messagesEndRef} />
         </div>
       </div>
-      <div className={styles.inputArea}>
-        <form onSubmit={handleSubmit} className={styles.inputForm}>
-          <input
-            type="text"
-            className={styles.inputField}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask something..."
-          />
-          <button type="submit" className={styles.sendButton}>
-            <FiSend />
-          </button>
-        </form>
-      </div>
+      <InputArea input={input} setInput={setInput} handleSubmit={handleSubmit}/>
     </div>
   );
 };

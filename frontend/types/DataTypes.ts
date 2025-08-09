@@ -4,6 +4,12 @@ export interface Message {
   timestamp: string;
 }
 
+export interface InputAreaProps {
+  input: string;
+  setInput: React.Dispatch<React.SetStateAction<string>>;
+  handleSubmit: (e: React.FormEvent) => void;
+}
+
 export interface HandleSendType {
   (messageToSend: string): Promise<void>;
 }
