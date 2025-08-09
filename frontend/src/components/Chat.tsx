@@ -1,21 +1,13 @@
 import { FiMenu, FiSend } from 'react-icons/fi';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-
 import ReactMarkdown from 'react-markdown';
 import TypingIndicator from './TypingIndicator';
 import remarkGfm from 'remark-gfm';
 import styles from './Chat.module.css';
+import type { Message,ChatProps } from '../../types/DataTypes'
 
-interface Message {
-  text: string;
-  sender: 'user' | 'bot';
-  timestamp: string;
-}
 
-interface ChatProps {
-  onMenuClick: () => void;
-  resetSignal?: number;
-}
+
 
 const Chat: React.FC<ChatProps> = ({ onMenuClick, resetSignal }) => {
   const [messages, setMessages] = useState<Message[]>([]);
