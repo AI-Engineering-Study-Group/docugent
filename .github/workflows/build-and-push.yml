@@ -1,0 +1,51 @@
+name: Build and Push Docker Images
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE1_NAME: ${{ github.repository }}-apiconf
+  IMAGE2_NAME: ${{ github.repository }}-nginx
+  DATE_TAG: ${{ github.run_id }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set date tag
+        id: vars
+        run: echo "DATE_TAG=$(date +'%Y%m%d')" >> $GITHUB_ENV
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push apiconf image
+        run: |
+          IMAGE1=${{ env.REGISTRY }}/${{ env.IMAGE1_NAME }}
+          docker build -t $IMAGE1:${DATE_TAG} -t $IMAGE1:latest -f docker/Dockerfile .
+          docker push $IMAGE1:${DATE_TAG}
+          docker push $IMAGE1:latest
+
+      - name: Build and push nginx image
+        run: |
+          IMAGE2=${{ env.REGISTRY }}/${{ env.IMAGE2_NAME }}
+          docker build -t $IMAGE2:${DATE_TAG} -t $IMAGE2:latest -f docker/nginx/Dockerfile .
+          docker push $IMAGE2:${DATE_TAG}
+          docker push $IMAGE2:latest
