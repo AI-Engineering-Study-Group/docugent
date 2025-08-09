@@ -4,9 +4,9 @@ import ReactMarkdown from 'react-markdown';
 import TypingIndicator from './TypingIndicator';
 import remarkGfm from 'remark-gfm';
 import styles from './Chat.module.css';
-import type { Message,ChatProps } from '../../types/DataTypes'
-
-
+import type { Message,ChatProps,HandleSendType } from '../../types/DataTypes'
+import Header from './sub-components/Header';
+import WelcomePromptSuggestions from './sub-components/WelcomePromptSuggestions';
 
 
 const Chat: React.FC<ChatProps> = ({ onMenuClick, resetSignal }) => {
@@ -28,7 +28,7 @@ const Chat: React.FC<ChatProps> = ({ onMenuClick, resetSignal }) => {
   const userId = getOrCreateId('apiconf_user_id');
   const sessionId = getOrCreateId('apiconf_session_id');
 
-  const handleSend = useCallback(async (messageToSend: string) => {
+  const handleSend:HandleSendType = useCallback(async (messageToSend: string) => {
     if (!messageToSend.trim()) return;
 
     // Save the first user message as the preview for the history
@@ -161,30 +161,12 @@ const Chat: React.FC<ChatProps> = ({ onMenuClick, resetSignal }) => {
 
   return (
     <div className={styles.chat}>
-      <div className={styles.chatHeader}>
-        <button className={styles.menuButton} onClick={onMenuClick}>
-          <FiMenu />
-        </button>
-        Chat with Ndu
-      </div>
+      {/* header */}
+      <Header onMenuClick={onMenuClick}/>
       <div className={styles.content}>
         <div className={styles.messages}>
           {messages.length === 0 ? (
-            <div className={styles.welcome}>
-              <h1>Welcome!</h1>
-              <p>Your friendly assistant for the API Conference 2025 in Lagos. Ask me about speakers, schedules, and more!</p>
-              <div className={styles.promptSuggestions}>
-                <button className={styles.promptButton} onClick={() => handleSend('Who are the main speakers?')}>
-                  Who are the main speakers?
-                </button>
-                <button className={styles.promptButton} onClick={() => handleSend('What is the conference schedule?')}>
-                  What is the conference schedule?
-                </button>
-                <button className={styles.promptButton} onClick={() => handleSend('How do I get to the venue?')}>
-                  How do I get to the venue?
-                </button>
-              </div>
-            </div>
+           <WelcomePromptSuggestions handleSend={handleSend}/>
           ) : (
             messages.map((msg, index) => (
               <div

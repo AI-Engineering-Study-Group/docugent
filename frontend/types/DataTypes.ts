@@ -4,6 +4,18 @@ export interface Message {
   timestamp: string;
 }
 
+export interface HandleSendType {
+  (messageToSend: string): Promise<void>;
+}
+
+export interface WelcomePromptSuggestionsProps {
+  handleSend: HandleSendType;
+}
+
+export interface HeaderType {
+  onMenuClick: ()=> void
+}
+
 export interface ChatProps {
   onMenuClick: () => void;
   resetSignal?: number;
