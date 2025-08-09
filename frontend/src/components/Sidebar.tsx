@@ -1,20 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import styles from './Sidebar.module.css';
 import { FiPlus, FiX } from 'react-icons/fi';
+import type {HistoryItem,SidebarProps} from '../../types/DataTypes'
 
-interface HistoryItem {
-  sessionId: string;
-  timestamp: string;
-  preview: string;
-}
 
-interface SidebarProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onNewChat: () => void;
-  onRestoreSession: (sessionId: string) => void;
-  activeSessionId: string | null;
-}
+
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onNewChat, onRestoreSession, activeSessionId }) => {
   const [history, setHistory] = useState<HistoryItem[]>([]);
