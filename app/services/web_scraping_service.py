@@ -5,11 +5,10 @@ Web scraping service for API Conference data.
 import asyncio
 import logging
 from typing import Dict, Any, Optional, List
-from pathlib import Path
 import aiohttp
 from bs4 import BeautifulSoup
-import json
 from datetime import datetime, timedelta
+from app.services.redis_service import RedisService
 
 logger = logging.getLogger(__name__)
 
@@ -20,12 +19,11 @@ class WebScrapingServiceError(Exception):
 class WebScrapingService:
     """Service for scraping API Conference website data."""
     
-    def __init__(self, cache_dir: str = "cache"):
+    def __init__(self):
         """Initialize the web scraping service."""
-        self.cache_dir = Path(cache_dir)
-        self.cache_dir.mkdir(exist_ok=True)
         self.session = None
-        self.cache_duration = timedelta(hours=1)  # Cache for 1 hour
+        self.redis_service = RedisService.get_instance()
+        self.cache_ttl = 3600  # Cache for 1 hour
         
         # Conference URLs
         self.urls = {
@@ -41,39 +39,21 @@ class WebScrapingService:
             self.session = aiohttp.ClientSession(timeout=timeout)
         return self.session
     
-    def _get_cache_path(self, url: str) -> Path:
-        """Get cache file path for a URL."""
+    def _get_cache_key(self, url: str) -> str:
+        """Get cache key for a URL."""
         import hashlib
-        url_hash = hashlib.md5(url.encode()).hexdigest()
-        return self.cache_dir / f"{url_hash}.json"
-    
-    def _is_cache_valid(self, cache_path: Path) -> bool:
-        """Check if cache is still valid."""
-        if not cache_path.exists():
-            return False
-        
-        try:
-            with open(cache_path, 'r') as f:
-                cache_data = json.load(f)
-            
-            cached_time = datetime.fromisoformat(cache_data.get("cached_at", "1970-01-01"))
-            return datetime.now() - cached_time < self.cache_duration
-        except Exception:
-            return False
+        return f"scrape:{hashlib.md5(url.encode()).hexdigest()}"
     
     async def _fetch_url(self, url: str, use_cache: bool = True) -> Dict[str, Any]:
         """Fetch URL content with caching."""
-        cache_path = self._get_cache_path(url)
+        cache_key = self._get_cache_key(url)
         
         # Check cache first
-        if use_cache and self._is_cache_valid(cache_path):
-            try:
-                with open(cache_path, 'r', encoding='utf-8') as f:
-                    cache_data = json.load(f)
+        if use_cache:
+            cached_data = self.redis_service.get(cache_key)
+            if cached_data:
                 logger.info(f"Using cached data for {url}")
-                return cache_data
-            except Exception as e:
-                logger.warning(f"Error reading cache for {url}: {e}")
+                return cached_data
         
         # Fetch from web
         try:
@@ -96,8 +76,7 @@ class WebScrapingService:
                             "status": "success",
                             "data": data
                         }
-                        with open(cache_path, 'w', encoding='utf-8') as f:
-                            json.dump(cache_data, f, indent=2, ensure_ascii=False)
+                        self.redis_service.set(cache_key, cache_data, ttl=self.cache_ttl)
                     
                     return {
                         "url": url,
@@ -343,24 +322,6 @@ class WebScrapingService:
             "spaces": results[0] if not isinstance(results[0], Exception) else {"status": "error", "error": str(results[0])},
             "main": results[1] if not isinstance(results[1], Exception) else {"status": "error", "error": str(results[1])}
         }
-    
-    async def clear_cache(self) -> Dict[str, Any]:
-        """Clear all cached data."""
-        try:
-            cache_files = list(self.cache_dir.glob("*.json"))
-            for cache_file in cache_files:
-                cache_file.unlink()
-            
-            return {
-                "status": "success",
-                "message": f"Cleared {len(cache_files)} cache files"
-            }
-        except Exception as e:
-            logger.error(f"Error clearing cache: {e}")
-            return {
-                "status": "error",
-                "error": str(e)
-            }
     
     async def close(self):
         """Close the aiohttp session."""

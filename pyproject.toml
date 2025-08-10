@@ -28,6 +28,8 @@ asyncpg = "^0.30.0"
 alembic = "^1.15.2"
 httpx = "^0.28.1"
 lxml = "^5.2.0"
+fakeredis = "^2.30.3"
+pytest-mock = "^3.14.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.0"

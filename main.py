@@ -12,6 +12,8 @@ import uvicorn
 from app.config.logger import Logger
 from app.config.settings import settings
 from app.api.v1.agents_router import router as agents_router
+from app.api.v1.redis_router import router as redis_router
+
 
 # Setup logging
 Logger.setup_root_logger()
@@ -55,6 +57,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(agents_router, prefix="/api/v1/agents", tags=["agents"])
+app.include_router(redis_router, prefix="/api/v1/redis", tags=["redis"])
 
 @app.get("/")
 async def root():

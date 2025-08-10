@@ -10,6 +10,8 @@ services:
     networks:
       - apiconf-network
     restart: unless-stopped
+    depends_on:
+      - redis
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/agents/health"]
       interval: 20s
@@ -17,6 +19,12 @@ services:
       retries: 3
     volumes:
       - ./data:/app/data
+      - ./app:/app/app
+      - ./tests:/app/tests
+      - ./scripts:/app/scripts
+      - ./main.py:/app/main.py
+      - ./pyproject.toml:/app/pyproject.toml
+      - ./poetry.lock:/app/poetry.lock
 
   nginx:
     build:
@@ -52,6 +60,20 @@ services:
     networks:
       - apiconf-network
 
+  redis:
+    image: "redis:alpine"
+    container_name: apiconf-agent-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - apiconf-network
+    restart: unless-stopped
+
 networks:
   apiconf-network:
-    driver: bridge 
+    driver: bridge
+
+volumes:
+  redis-data:

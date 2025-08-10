@@ -11,11 +11,19 @@ from google.adk.tools import FunctionTool
 
 from app.config.logger import Logger
 from app.config.settings import settings
+from app.services.redis_service import RedisService
 
 logger = Logger.get_logger(__name__)
+redis_service = RedisService.get_instance()
 
 def _load_csv_data() -> List[Dict[str, Any]]:
     """Load session and speaker data from CSV file."""
+    cache_key = "csv_data"
+    cached_data = redis_service.get(cache_key)
+    if cached_data:
+        logger.info("Returning cached CSV data")
+        return cached_data
+
     try:
         csv_path = Path("data/api-conf-lagos-2025 flattened accepted sessions - exported 2025-07-05 - Accepted sessions and speakers.csv")
         if not csv_path.exists():
@@ -50,6 +58,7 @@ def _load_csv_data() -> List[Dict[str, Any]]:
                 sessions.append(session)
         
         logger.info(f"Loaded {len(sessions)} sessions from CSV")
+        redis_service.set(cache_key, sessions, ttl=86400)  # Cache for 24 hours
         return sessions
         
     except Exception as e:
@@ -276,4 +285,4 @@ def get_csv_schedule_tools() -> List[FunctionTool]:
         FunctionTool(search_speakers_csv),
         FunctionTool(get_full_schedule_csv),
         FunctionTool(get_keynote_speakers_csv)
-    ] 
+    ]
