@@ -5,6 +5,11 @@ add-package:
 	@poetry install
 	@docker compose build
 
+remove-package:
+	@poetry remove $(pkg)
+	@poetry install
+	@docker compose build
+
 add-dev-package:
 	@poetry add --group dev $(pkg)
 	@poetry install
