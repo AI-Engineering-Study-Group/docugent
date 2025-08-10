@@ -34,6 +34,7 @@ COPY app/ ./app/
 COPY main.py .
 COPY data/ ./data/
 COPY scripts/ ./scripts/
+COPY tests/ ./tests/
 
 # Add the app directory to the Python path
 ENV PYTHONPATH="${PYTHONPATH}:/app"

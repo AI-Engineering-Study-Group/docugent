@@ -3,6 +3,7 @@ API Conference AI Agent using Google ADK.
 """
 
 import logging
+import hashlib
 from typing import Dict, Any, Optional
 from google.adk.agents import LlmAgent
 from google.adk.runners import Runner
@@ -13,6 +14,7 @@ from app.services.session_manager import SessionManager
 from app.services.message_processor import MessageProcessor
 from app.services.response_processor import ResponseProcessor
 from app.services.agent_config import AgentConfig
+from app.services.redis_service import RedisService
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +26,7 @@ class APIConfAgent:
         # Initialize services
         self.tool_manager = ToolManager()
         self.session_manager = SessionManager()
+        self.redis_service = RedisService.get_instance()
         
         # Create the agent using LlmAgent
         self.agent = LlmAgent(
@@ -54,6 +57,15 @@ class APIConfAgent:
                   timestamp: int = None, timezone_offset: int = None) -> Dict[str, Any]:
         """Process a chat message and return a response."""
         try:
+            # Create a cache key for the message
+            cache_key = f"chat:{hashlib.md5(message.encode()).hexdigest()}"
+            
+            # Check cache first
+            cached_response = self.redis_service.get(cache_key)
+            if cached_response:
+                logger.info(f"Returning cached response for message: {message}")
+                return cached_response
+
             # Set defaults
             user_id = user_id or "default_user"
             session_id = session_id or f"session_{user_id}"
@@ -93,12 +105,17 @@ class APIConfAgent:
             if final_response is None:
                 final_response = "I apologize, but I couldn't generate a response. Please try again."
             
-            return {
+            response = {
                 "success": True,
                 "response": final_response,
                 "user_id": user_id,
                 "session_id": session_id
             }
+            
+            # Cache the response
+            self.redis_service.set(cache_key, response, ttl=3600)
+            
+            return response
         except Exception as e:
             logger.error(f"Error in chat: {e}", exc_info=True)
             return {
@@ -116,4 +133,4 @@ class APIConfAgent:
             "dates": "July 18-19, 2025",
             "speakers_announced": True,
             "total_speakers": 44
-        } 
+        }
