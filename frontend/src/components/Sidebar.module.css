@@ -61,7 +61,9 @@
   align-items: center;
   gap: 12px;
   font-size: 16px;
-  transition: background-color 0.2s, color 0.2s;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
 }
 
 .nav a:hover {
@@ -119,7 +121,9 @@
   font-size: 0.75rem;
   color: #6b7280;
 }
-
+.closeButton {
+  display: none;
+}
 @media (max-width: 768px) {
   .sidebar {
     position: absolute;
@@ -157,7 +161,7 @@
     font-size: 24px;
     cursor: pointer;
   }
-  
+
   .logo {
     position: relative;
   }
@@ -166,7 +170,3 @@
 .overlay {
   display: none;
 }
-
-.closeButton {
-  display: none;
-} 

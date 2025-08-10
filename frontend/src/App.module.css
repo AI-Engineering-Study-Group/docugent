@@ -3,7 +3,7 @@
   height: 100%;
   max-width: 1200px;
   max-height: 800px;
-  background: #FFFFFD;
+  background: #fffffd;
   display: flex;
   border-radius: 12px;
   overflow: hidden;
@@ -60,12 +60,14 @@ main {
   margin-bottom: 0.75rem;
   cursor: pointer;
   border: 1px solid #e5e7eb;
-  transition: background-color 0.2s, box-shadow 0.2s;
+  transition:
+    background-color 0.2s,
+    box-shadow 0.2s;
 }
 
 .historyItem:hover {
   background-color: #f9fafb;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .historyItemContent {

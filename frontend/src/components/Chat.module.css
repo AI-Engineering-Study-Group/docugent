@@ -13,8 +13,12 @@
   font-weight: 600;
   color: #1e293b;
   flex-shrink: 0;
-}
 
+
+h1 {
+      font-size: clamp(1rem, 4vw, 1.15rem);
+}
+}
 .content {
   flex: 1;
   display: flex;
@@ -163,7 +167,9 @@
   border-radius: 12px;
   border: 1px solid #e2e8f0;
 }
-
+.inputForm:focus-within{
+  outline:1px solid #0000ff;
+}
 .inputField {
   flex: 1;
   padding: 12px;
@@ -204,6 +210,17 @@
   cursor: pointer;
   margin-right: 16px;
 }
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
 
 @media (max-width: 768px) {
   .chat {
@@ -213,8 +230,10 @@
   }
 
   .chatHeader {
-    padding: 16px 12px;
-    font-size: 16px;
+    display: flex;
+    align-items: center;
+ 
+    
   }
 
   .content {
@@ -241,6 +260,4 @@
   .menuButton {
     display: block;
   }
-  
 }
-
