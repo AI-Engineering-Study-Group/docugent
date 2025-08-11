@@ -17,10 +17,10 @@ from app.schemas.auth import (
     AuthSuccessResponse,
     UserSuccessResponse,
     ChangePasswordRequest,
-    VerificationVerifyRequest,
-    VerificationResendRequest,
-    VerificationCreateResponse,
-    VerificationSuccessResponse,
+#     VerificationVerifyRequest,
+#     VerificationResendRequest,
+#     VerificationCreateResponse,
+#     VerificationSuccessResponse,
 )
 from app.schemas.base import SuccessResponseSchema
 from app.services.auth_service import auth_service
@@ -102,7 +102,7 @@ async def register_user(
 
     return SuccessResponseSchema(
         data=token_response,
-        message="User registered successfully. Verification code sent to email."
+        message="User registered successfully."
     )
 
 

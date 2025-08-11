@@ -21,7 +21,11 @@ class User(Base, TimestampMixin):
     last_name: Mapped[str] = mapped_column(String(100), nullable=False)
     phone_number: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
-    is_verified: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    is_verified: Mapped[bool] = mapped_column(
+        Boolean, 
+        default=True, # will become false when the mail is set up properly
+        nullable=False
+        )
     
     # Foreign Key to Role (Many users to One role)
     role_id: Mapped[int] = mapped_column(ForeignKey("roles.id"), nullable=False)

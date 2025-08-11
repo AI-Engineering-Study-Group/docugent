@@ -1,952 +1,199 @@
-# Docugent - Complete Setup & Authentication Guide
+# Docugent – Authentication Guide
 
-This comprehensive guide covers the complete setup of the Docugent application with JWT authentication, role-based authorization, Docker deployment, and cloud database integration.
+This document focuses on the authentication system: JWT tokens, login/registration flows, password changes, and protected access.
 
-## Table of Contents
+## What you get
 
-1. [Project Overview](#project-overview)
-2. [Prerequisites](#prerequisites)
-3. [Quick Start](#quick-start)
-4. [Authentication System](#authentication-system)
-5. [Docker Deployment](#docker-deployment)
-6. [Cloud Database Setup](#cloud-database-setup)
-7. [API Documentation](#api-documentation)
-8. [Security Configuration](#security-configuration)
-9. [Development Guide](#development-guide)
-10. [Troubleshooting](#troubleshooting)
+- JWT authentication with access and refresh tokens
+- Role-aware access via FastAPI dependencies (admin, moderator, user)
+- Secure password hashing with per-user salt and failed-attempt tracking
+- Token blacklist for logout/revocation
 
-## Project Overview
 
-Docugent is an AI-powered agent system designed for API Conference management, featuring:
+## Docker setup (recommended)
 
-- **JWT Authentication**: Secure access/refresh token system
-- **Role-based Authorization**: Admin, Moderator, User roles
-- **FastAPI Backend**: High-performance Python web framework
-- **React Frontend**: Modern TypeScript-based UI
-- **Docker Deployment**: Container-based deployment
-- **Cloud Database**: PostgreSQL cloud database support
-- **Poetry Management**: Modern Python dependency management
+Run the auth-enabled backend with Docker. The entrypoint handles migrations and seeds roles/admin.
 
-### Architecture
-
-```
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│   React UI      │────▶│   FastAPI       │────▶│  PostgreSQL     │
-│   (TypeScript)  │     │   Backend       │     │  Database       │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
-                                 │
-                                 ▼
-                        ┌─────────────────┐
-                        │   AI Agents     │
-                        │   & Tools       │
-                        └─────────────────┘
-```
-
-## Prerequisites
-
-### System Requirements
-
-- **Python**: 3.10+
-- **Node.js**: 18+ (for frontend)
-- **Docker**: 20.10+ and Docker Compose
-- **Git**: For version control
-
-### Cloud Database Account
-
-Choose one of these cloud PostgreSQL providers:
-
-- [Supabase](https://supabase.com) (Recommended - Free tier available)
-- [Railway](https://railway.app)
-- [Neon](https://neon.tech)
-- AWS RDS
-- DigitalOcean Managed Database
-- Heroku Postgres
-
-## Quick Start
-
-### 1. Clone and Setup
-
-```bash
-# Clone repository
-git clone <repository-url>
-cd docugent
-
-# Install Poetry (if not installed)
-curl -sSL https://install.python-poetry.org | python3 -
-
-# Create clean virtual environment
-poetry env use python3
-poetry install
-```
-
-### 2. Environment Configuration
-
-```bash
-# Copy environment template
-cp env.example .env
-
-# Edit .env file with your configuration
-nano .env
-```
-
-**Required Environment Variables:**
+1. Create .env (minimum required)
 
 ```env
-# Database (Required)
-DATABASE_URL=postgresql://user:password@host:port/database
+# Database
+DATABASE_URL=postgresql://user:password@host:5432/db
 
-# JWT Security (Required)
-SECRET_KEY=your-super-secret-key-here
+# JWT
+SECRET_KEY=your-256-bit-secret
 JWT_ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 REFRESH_TOKEN_EXPIRE_DAYS=7
 
-# Google Services (Required for AI features)
-GOOGLE_API_KEY=your-google-api-key
-
-# Optional Settings
-DEBUG=false
-LOG_LEVEL=INFO
+# Required app settings (placeholders ok for auth tests)
+GOOGLE_API_KEY=dummy
+GOOGLE_MAPS_API_KEY=dummy
+GOOGLE_SHEETS_URL=https://example.com/sheet
+CONFERENCE_VENUE_NAME=APIConf Venue
+CONFERENCE_VENUE_ADDRESS=123 Example St
+CONFERENCE_VENUE_COORDINATES=6.5244,3.3792
+CONFERENCE_DATES=2025-09-01..2025-09-03
+SUPPORT_PHONE=+1 555 0100
+SUPPORT_EMAIL=support@example.com
 ```
 
-### 3. Quick Development Start
+2. Build and start
 
 ```bash
-# Run database migrations
-poetry run alembic upgrade head
-
-# Initialize database with default data
-poetry run python scripts/init_db.py
-
-# Start development server
-poetry run python main.py
+docker compose down -v && docker system prune -f && docker compose up --build
 ```
 
-### 4. Quick Docker Start
+3. Verify
 
 ```bash
-# Start all services with Docker
-docker-compose up --build
+# Health check via NGINX (port 2025)
+curl http://localhost:2025/api/v1/agents/health
+
+# Example: get current user (requires Bearer token from login)
+curl -H "Authorization: Bearer <access_token>" http://localhost:2025/api/v1/auth/me
 ```
 
-**Default Admin Credentials:**
+Notes
 
-- Email: `admin@apiconf.com`
-- Password: `admin123!@#`
+- Backend Documentation is reachable at http://localhost:2025/docs via NGINX proxy.
+- Migrations are auto-generated/applied on container start; default roles (admin, moderator, user) and the admin account are seeded if missing.
+- Auth endpoints are under /api/v1/auth (register, login, refresh, logout, me, change-password).
 
-⚠️ **Important**: Change default password immediately after first login!
+Default admin (created by init script):
 
-## Authentication System
+- Email: admin@apiconf.com
+- Password: admin123!@# (change immediately)
 
-### Architecture Overview
+## Data model (brief)
 
-The authentication system implements JWT-based authentication with role-based authorization:
+- users: public profile and role reference
+- auth: one-to-one with users (hashed_password, salt, refresh_token, security fields)
+- roles: admin, moderator, user (attached to users.role_id)
+- token_blacklist: stores revoked tokens (token, type, user_id, expires_at)
 
-#### Database Schema
+### Data separation: public vs private
 
-```sql
--- Role definitions
-CREATE TABLE roles (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(50) UNIQUE NOT NULL,
-    description TEXT,
-    permissions JSONB,
-    is_active BOOLEAN DEFAULT true,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+- The API returns only public user data (from the `users` table) via `UserResponse`: id, email, first_name, last_name, phone_number, is_active, is_verified, role, timestamps, and a computed full_name.
+- Sensitive auth data (from the `auth` table) is never returned by the API. It contains hashed_password, salt, refresh_token(+expiry), and security fields (failed attempts, reset tokens).
 
--- Public user information
-CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    first_name VARCHAR(100) NOT NULL,
-    last_name VARCHAR(100) NOT NULL,
-    phone_number VARCHAR(20),
-    is_active BOOLEAN DEFAULT true,
-    is_verified BOOLEAN DEFAULT false,
-    role_id INTEGER REFERENCES roles(id),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+## Password policy
 
--- Private authentication data (one-to-one with users)
-CREATE TABLE auth (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER UNIQUE REFERENCES users(id) ON DELETE CASCADE,
-    hashed_password VARCHAR(255) NOT NULL,
-    salt VARCHAR(255) NOT NULL,
-    refresh_token TEXT,
-    refresh_token_expires_at TIMESTAMP,
-    failed_login_attempts INTEGER DEFAULT 0,
-    last_login_at TIMESTAMP,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+- At least 8 characters
+- Must include: one uppercase, one lowercase, and one digit
 
--- Token blacklist for logout/revocation
-CREATE TABLE token_blacklist (
-    id SERIAL PRIMARY KEY,
-    token_jti VARCHAR(255) UNIQUE NOT NULL,
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    blacklisted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    expires_at TIMESTAMP NOT NULL
-);
-```
+## JWT lifecycle
 
-#### Relationships
+- Access token: short-lived (minutes)
+- Refresh token: long-lived (days), stored in auth table
+- Logout: refresh token blacklisted and cleared; access tokens are rejected if blacklisted
 
-- **User ↔ Role**: Many-to-One (many users can have the same role)
-- **User ↔ Auth**: One-to-One (each user has one auth record)
-- **Auth data is never exposed** in API responses
+## RBAC and roles
 
-### Security Features
+- Default roles are seeded on first init: admin, moderator, user (see `scripts/init_db.py`).
+- Role management endpoints exist under `/api/v1/roles` to perform CRUD. Create/Update/Delete require admin; reads are allowed per role guards.
+- Access control helpers live in `app/dependencies/auth.py` (require_admin, require_moderator, require_user).
 
-#### Password Security
+## Response envelope
 
-- **bcrypt hashing** with unique salt per user
-- **Strong password validation**
-- **Failed login attempt tracking**
-
-#### JWT Tokens
-
-- **Access tokens**: Short-lived (30 minutes default)
-- **Refresh tokens**: Long-lived (7 days default)
-- **Token blacklisting**: Secure logout implementation
-- **JTI (JWT ID)**: Unique identifier for each token
-
-#### Role-based Access Control
-
-- **Admin**: Full system access, user management, role management
-- **Moderator**: Limited admin access, user viewing and updating
-- **User**: Basic access, own profile management
-
-### API Authentication Endpoints
-
-All authentication endpoints are under `/api/v1/auth`:
-
-#### Registration
-
-```bash
-POST /api/v1/auth/register
-Content-Type: application/json
-
-{
-  "email": "user@example.com",
-  "password": "SecurePass123!",
-  "first_name": "John",
-  "last_name": "Doe",
-  "role_id": 3
-}
-```
-
-#### Login
-
-```bash
-POST /api/v1/auth/login
-Content-Type: application/json
-
-{
-  "email": "user@example.com",
-  "password": "SecurePass123!"
-}
-
-# Response:
-{
-  "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
-  "refresh_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
-  "token_type": "bearer",
-  "expires_in": 1800,
-  "user": {
-    "id": 1,
-    "email": "user@example.com",
-    "first_name": "John",
-    "last_name": "Doe",
-    "role": "user"
-  }
-}
-```
-
-#### Refresh Token
-
-```bash
-POST /api/v1/auth/refresh
-Content-Type: application/json
-
-{
-  "refresh_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
-}
-```
-
-#### Logout
-
-```bash
-POST /api/v1/auth/logout
-Authorization: Bearer <access_token>
-```
-
-#### Protected Endpoint Access
-
-```bash
-GET /api/v1/auth/me
-Authorization: Bearer <access_token>
-```
-
-## Docker Deployment
-
-### Docker Architecture
-
-The application uses a multi-service Docker setup:
-
-```yaml
-services:
-  backend: # FastAPI application
-  frontend: # React application
-  csv-updater: # Scheduled data updates
-```
-
-### Docker Configuration
-
-The `docker-compose.yml` is configured for cloud database deployment:
-
-```yaml
-version: "3.8"
-
-services:
-  backend:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
-      target: backend
-    ports:
-      - "8000:8000"
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - SECRET_KEY=${SECRET_KEY}
-      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
-    env_file:
-      - .env
-
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: ../docker/nginx/Dockerfile
-    ports:
-      - "3000:80"
-    depends_on:
-      - backend
-
-  csv-updater:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
-      target: csv-updater
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
-    env_file:
-      - .env
-```
-
-### Deployment Steps
-
-1. **Configure Environment:**
-
-   ```bash
-   cp env.example .env
-   # Edit .env with your cloud database URL and secrets
-   ```
-
-2. **Build and Start:**
-
-   ```bash
-   docker-compose up --build
-   ```
-
-3. **Verify Deployment:**
-   ```bash
-   curl http://localhost:8000/api/v1/agents/health
-   ```
-
-### Docker Environment Variables
-
-The application automatically loads environment variables from:
-
-- `.env` file
-- Docker environment variables
-- System environment variables
-
-### Database Initialization
-
-The Docker setup includes automatic database initialization:
-
-1. **Migration**: Runs Alembic migrations
-2. **Seed Data**: Creates default roles and admin user
-3. **Health Check**: Verifies database connectivity
-
-## Cloud Database Setup
-
-### Supported Providers
-
-#### 🚀 Supabase (Recommended)
-
-```bash
-# Get from Supabase Dashboard > Settings > Database
-DATABASE_URL=postgresql://postgres:[password]@[host]:5432/postgres?sslmode=require
-```
-
-**Setup Steps:**
-
-1. Create account at [supabase.com](https://supabase.com)
-2. Create new project
-3. Go to Settings > Database
-4. Copy connection string
-5. Add to `.env` file
-
-#### ⚡ Neon
-
-```bash
-DATABASE_URL=postgresql://[user]:[password]@[host]/[dbname]?sslmode=require
-```
-
-#### 🚄 Railway
-
-```bash
-DATABASE_URL=postgresql://postgres:[password]@[host]:5432/railway
-```
-
-#### ☁️ AWS RDS
-
-```bash
-DATABASE_URL=postgresql://[username]:[password]@[rds-endpoint]:5432/[dbname]
-```
-
-### Security Configuration
-
-#### SSL Requirements
-
-Most cloud providers require SSL connections:
-
-```bash
-DATABASE_URL=postgresql://user:pass@host:port/db?sslmode=require
-```
-
-#### Connection Pooling
-
-For production environments:
-
-```bash
-DATABASE_URL=postgresql://user:pass@host:port/db?max_connections=20&min_connections=5
-```
-
-#### IP Whitelisting
-
-- Add your server's IP to database firewall rules
-- For Docker deployment, ensure container network can reach external hosts
-
-## API Documentation
-
-### Complete API Reference
-
-#### Authentication Endpoints (`/api/v1/auth`)
-
-| Method | Endpoint           | Description           | Auth Required | Role Required |
-| ------ | ------------------ | --------------------- | ------------- | ------------- |
-| POST   | `/register`        | Register new user     | No            | None          |
-| POST   | `/login`           | User login            | No            | None          |
-| POST   | `/refresh`         | Refresh access token  | No            | None          |
-| POST   | `/logout`          | Logout user           | Yes           | Any           |
-| GET    | `/me`              | Get current user info | Yes           | Any           |
-| POST   | `/change-password` | Change password       | Yes           | Any           |
-
-#### Role Management (`/api/v1/roles`)
-
-| Method | Endpoint     | Description     | Auth Required | Role Required |
-| ------ | ------------ | --------------- | ------------- | ------------- |
-| POST   | `/`          | Create role     | Yes           | Admin         |
-| GET    | `/`          | Get all roles   | Yes           | User+         |
-| GET    | `/{role_id}` | Get single role | Yes           | User+         |
-| PUT    | `/{role_id}` | Update role     | Yes           | Admin         |
-| DELETE | `/{role_id}` | Delete role     | Yes           | Admin         |
-
-#### User Management (`/api/v1/users`)
-
-| Method | Endpoint                | Description      | Auth Required | Role Required   |
-| ------ | ----------------------- | ---------------- | ------------- | --------------- |
-| GET    | `/`                     | Get all users    | Yes           | Moderator+      |
-| GET    | `/{user_id}`            | Get user         | Yes           | Self/Moderator+ |
-| PUT    | `/{user_id}`            | Update user      | Yes           | Self/Moderator+ |
-| PATCH  | `/{user_id}/activate`   | Activate user    | Yes           | Admin           |
-| PATCH  | `/{user_id}/deactivate` | Deactivate user  | Yes           | Admin           |
-| PATCH  | `/{user_id}/role`       | Change user role | Yes           | Admin           |
-
-#### Agent Endpoints (`/api/v1/agents`)
-
-| Method | Endpoint         | Description       | Auth Required | Role Required |
-| ------ | ---------------- | ----------------- | ------------- | ------------- |
-| GET    | `/health`        | Health check      | No            | None          |
-| POST   | `/chat`          | Send chat message | Yes           | User+         |
-| GET    | `/sessions`      | Get user sessions | Yes           | User+         |
-| DELETE | `/sessions/{id}` | Delete session    | Yes           | User+         |
-
-### Response Formats
-
-#### Success Response
+All successful endpoints return:
 
 ```json
 {
   "success": true,
-  "data": { ... },
-  "message": "Operation completed successfully"
+  "data": {},
+  "message": "..."
 }
 ```
 
-#### Error Response
+Errors use FastAPI HTTP errors (JSON with a "detail" message and proper status code).
+
+## Endpoints (base path: /api/v1/auth)
+
+### Register
+
+- POST /register
+- Body:
 
 ```json
 {
-  "success": false,
-  "error": {
-    "code": "VALIDATION_ERROR",
-    "message": "Invalid input data",
-    "details": { ... }
-  }
+  "email": "user@example.com",
+  "password": "SecurePass123",
+  "first_name": "John",
+  "last_name": "Doe",
+  "phone_number": "+1 555 1234",
+  "role_id": 1
 }
 ```
 
-#### Authentication Response
+- Response data (TokenResponse): access_token, refresh_token, token_type, expires_in, user
+
+### Login
+
+- POST /login
+- Body:
 
 ```json
-{
-  "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
-  "refresh_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
-  "token_type": "bearer",
-  "expires_in": 1800,
-  "user": {
-    "id": 1,
-    "email": "user@example.com",
-    "first_name": "John",
-    "last_name": "Doe",
-    "role": "user",
-    "is_active": true,
-    "is_verified": false
-  }
-}
+{ "email": "user@example.com", "password": "SecurePass123" }
 ```
 
-## Security Configuration
+- Response data (TokenResponse)
 
-### JWT Configuration
+### Refresh access token
 
-#### Secret Key Generation
+- POST /refresh
+- Body:
 
-```bash
-# Generate a secure secret key
-openssl rand -hex 32
+```json
+{ "refresh_token": "<refresh>" }
 ```
 
-#### Token Configuration
+- Response data (TokenResponse)
 
-```env
-# JWT settings
-SECRET_KEY=your-256-bit-secret-key
-JWT_ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=30    # Short-lived
-REFRESH_TOKEN_EXPIRE_DAYS=7       # Long-lived
+### Logout
+
+- POST /logout
+- Auth: Bearer access token
+- Body:
+
+```json
+{ "refresh_token": "<refresh>" }
 ```
 
-### Password Security
+- Effect: refresh token blacklisted and cleared
 
-#### Password Requirements
+### Current user
 
-- Minimum 8 characters
-- At least one uppercase letter
-- At least one lowercase letter
-- At least one number
-- At least one special character
+- GET /me
+- Auth: Bearer access token
+- Response data: user
 
-#### Implementation
+### Change password
 
-```python
-# Password validation regex
-PASSWORD_REGEX = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$'
+- POST /change-password
+- Auth: Bearer access token
+- Body:
+
+```json
+{ "current_password": "OldPass123", "new_password": "NewPass123" }
 ```
 
-### Rate Limiting
+- Effect: updates password, invalidates stored refresh token
 
-#### Implementation Recommendations
+## Deletion and revocation behavior
 
-```python
-# Add to FastAPI app
-from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.util import get_remote_address
-from slowapi.errors import RateLimitExceeded
+- Deleting a user cascades and deletes the corresponding row in `auth` (DB-level ON DELETE CASCADE).
+- On logout, the current refresh token is cleared from the `auth` table and appended to `token_blacklist` (revoked). Access tokens remain valid until expiry unless explicitly blacklisted.
 
-limiter = Limiter(key_func=get_remote_address)
-app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+## Security notes
 
-# Apply to login endpoint
-@limiter.limit("5/minute")
-async def login(request: Request, ...):
-    # Login logic
-```
+- Generate a strong SECRET_KEY (openssl rand -hex 32)
+- Always use HTTPS in production
+- Rotate secrets regularly and change default admin password after first login
 
-### HTTPS Configuration
+## Implementation references
 
-#### Production Setup
-
-```nginx
-server {
-    listen 443 ssl;
-    server_name your-domain.com;
-
-    ssl_certificate /path/to/certificate.crt;
-    ssl_certificate_key /path/to/private.key;
-
-    location / {
-        proxy_pass http://backend:8000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-    }
-}
-```
-
-## Development Guide
-
-### Project Structure
-
-```
-docugent/
-├── app/                    # FastAPI application
-│   ├── agents/             # AI agents and tools
-│   ├── api/                # API routes
-│   ├── config/             # Configuration
-│   ├── schemas/            # Pydantic models
-│   └── services/           # Business logic
-├── frontend/               # React application
-├── docker/                 # Docker configuration
-├── data/                   # Data files
-├── scripts/                # Utility scripts
-├── tests/                  # Test files
-├── alembic/                # Database migrations
-├── docs/                   # Documentation
-├── pyproject.toml          # Poetry configuration
-├── docker-compose.yml      # Docker services
-└── .env                    # Environment variables
-```
-
-### Development Workflow
-
-#### 1. Local Development Setup
-
-```bash
-# Install dependencies
-poetry install
-
-# Activate virtual environment
-poetry shell
-
-# Run database migrations
-poetry run alembic upgrade head
-
-# Initialize database
-poetry run python scripts/init_db.py
-
-# Start development server
-poetry run python main.py
-```
-
-#### 2. Database Management
-
-##### Create Migration
-
-```bash
-poetry run alembic revision --autogenerate -m "Add new table"
-```
-
-##### Run Migrations
-
-```bash
-poetry run alembic upgrade head
-```
-
-##### Rollback Migration
-
-```bash
-poetry run alembic downgrade -1
-```
-
-#### 3. Testing
-
-##### Run Tests
-
-```bash
-# Run all tests
-poetry run pytest
-
-# Run specific test file
-poetry run pytest tests/test_auth.py
-
-# Run with coverage
-poetry run pytest --cov=app
-```
-
-##### Test Database
-
-Tests use a separate test database configured in `tests/conftest.py`.
-
-#### 4. Code Quality
-
-##### Format Code
-
-```bash
-poetry run black .
-poetry run isort .
-```
-
-##### Lint Code
-
-```bash
-poetry run flake8
-poetry run mypy app/
-```
-
-### Adding New Features
-
-#### 1. Create Database Models
-
-```python
-# app/models/new_model.py
-from sqlalchemy import Column, Integer, String
-from app.database import Base
-
-class NewModel(Base):
-    __tablename__ = "new_models"
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False)
-```
-
-#### 2. Create Pydantic Schemas
-
-```python
-# app/schemas/new_model.py
-from pydantic import BaseModel
-
-class NewModelCreate(BaseModel):
-    name: str
-
-class NewModelResponse(BaseModel):
-    id: int
-    name: str
-
-    class Config:
-        from_attributes = True
-```
-
-#### 3. Implement Service Layer
-
-```python
-# app/services/new_service.py
-from app.models.new_model import NewModel
-from app.schemas.new_model import NewModelCreate
-
-class NewService:
-    async def create(self, data: NewModelCreate) -> NewModel:
-        # Implementation
-        pass
-```
-
-#### 4. Create API Routes
-
-```python
-# app/api/v1/new_routes.py
-from fastapi import APIRouter, Depends
-from app.services.new_service import NewService
-
-router = APIRouter(prefix="/new", tags=["new"])
-
-@router.post("/")
-async def create_new(data: NewModelCreate):
-    service = NewService()
-    return await service.create(data)
-```
-
-## Troubleshooting
-
-### Common Issues
-
-#### 1. Database Connection Issues
-
-**Error**: `connection refused`
-
-```bash
-# Check database URL
-echo $DATABASE_URL
-
-# Test connection
-poetry run python -c "import asyncpg; print('Testing connection...')"
-```
-
-**Solutions**:
-
-- Verify DATABASE_URL format
-- Check firewall settings
-- Ensure IP is whitelisted
-- Verify SSL requirements
-
-#### 2. Authentication Issues
-
-**Error**: `Invalid credentials`
-
-```bash
-# Check user exists
-poetry run python scripts/check_user.py admin@apiconf.com
-
-# Reset admin password
-poetry run python scripts/reset_admin_password.py
-```
-
-**Error**: `Token expired`
-
-```bash
-# Check token settings
-grep TOKEN .env
-
-# Use refresh token endpoint
-curl -X POST /api/v1/auth/refresh -d '{"refresh_token": "..."}'
-```
-
-#### 3. Docker Issues
-
-**Error**: `Container exits immediately`
-
-```bash
-# Check logs
-docker-compose logs backend
-
-# Debug container
-docker-compose run backend bash
-```
-
-**Error**: `Port already in use`
-
-```bash
-# Check processes using port
-sudo lsof -i :8000
-
-# Kill process
-sudo kill -9 <PID>
-```
-
-#### 4. Environment Variable Issues
-
-**Error**: `Environment variable not found`
-
-```bash
-# Check .env file
-cat .env
-
-# Verify Docker loads .env
-docker-compose config
-```
-
-#### 5. Poetry Issues
-
-**Error**: `Poetry not found`
-
-```bash
-# Install Poetry
-curl -sSL https://install.python-poetry.org | python3 -
-
-# Add to PATH
-export PATH="$HOME/.local/bin:$PATH"
-```
-
-**Error**: `Dependency conflicts`
-
-```bash
-# Clear cache
-poetry cache clear pypi --all
-
-# Reinstall dependencies
-poetry install --no-cache
-```
-
-### Debugging Tools
-
-#### 1. Health Check Endpoint
-
-```bash
-curl http://localhost:8000/api/v1/agents/health
-```
-
-#### 2. Database Console
-
-```bash
-# Connect to database
-poetry run python scripts/db_console.py
-```
-
-#### 3. Log Analysis
-
-```bash
-# View application logs
-docker-compose logs -f backend
-
-# Check specific service
-docker-compose logs csv-updater
-```
-
-#### 4. Token Debugging
-
-```bash
-# Decode JWT token (without verification)
-poetry run python scripts/decode_token.py <token>
-```
-
-### Performance Optimization
-
-#### 1. Database Optimization
-
-- Enable connection pooling
-- Add database indexes
-- Use read replicas for heavy queries
-
-#### 2. Caching
-
-- Implement Redis for session storage
-- Cache frequently accessed data
-- Use CDN for static assets
-
-#### 3. Monitoring
-
-- Set up application monitoring
-- Monitor database performance
-- Track API response times
-
-### Support and Resources
-
-#### Documentation
-
-- FastAPI: https://fastapi.tiangolo.com/
-- SQLAlchemy: https://docs.sqlalchemy.org/
-- Alembic: https://alembic.sqlalchemy.org/
-- Poetry: https://python-poetry.org/docs/
-
-#### Community
-
-- FastAPI Discord
-- Python Discord
-- Stack Overflow
-
----
-
-## Conclusion
-
-This comprehensive guide covers all aspects of setting up and deploying the Docugent application. The authentication system provides enterprise-grade security with JWT tokens and role-based access control, while the Docker deployment ensures scalability and consistency across environments.
-
-For additional support or questions, please refer to the troubleshooting section or reach out to the development team.
-
-**Security Reminder**: Always use HTTPS in production, change default passwords, and regularly rotate secret keys.
+- Endpoints: app/api/v1/auth_router.py
+- Schemas: app/schemas/auth.py (TokenResponse, UserRegistrationRequest, etc.)
+- Dependencies: app/dependencies/auth.py (Bearer auth, role guards)
+- Service: app/services/auth_service.py (hashing, JWTs, blacklist)
