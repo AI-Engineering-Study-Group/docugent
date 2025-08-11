@@ -5,6 +5,7 @@ from typing import Optional, List
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
 from .base import SuccessResponseSchema
+from app.models.verification_token import VerificationType
 
 
 # Authentication Schemas
@@ -155,6 +156,33 @@ class RoleSuccessResponse(SuccessResponseSchema[RoleResponse]):
 
 class RolesListResponse(SuccessResponseSchema[List[RoleResponse]]):
     """Roles list response."""
+    pass
+
+
+# Verification Schemas
+class VerificationCreateRequest(BaseModel):
+    email: EmailStr
+    type: VerificationType = Field(VerificationType.VERIFY_EMAIL)
+
+
+class VerificationVerifyRequest(BaseModel):
+    email: EmailStr
+    type: VerificationType
+    token: str = Field(..., min_length=6, max_length=6)
+
+
+class VerificationResendRequest(BaseModel):
+    email: EmailStr
+    type: VerificationType
+
+
+class VerificationCreateResponse(BaseModel):
+    email: EmailStr
+    type: VerificationType
+    expires_at: datetime
+
+
+class VerificationSuccessResponse(SuccessResponseSchema[VerificationCreateResponse]):
     pass
 
 

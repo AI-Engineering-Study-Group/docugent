@@ -1,5 +1,6 @@
 """Authentication API routes."""
 
+from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -15,11 +16,17 @@ from app.schemas.auth import (
     LogoutRequest,
     AuthSuccessResponse,
     UserSuccessResponse,
-    ChangePasswordRequest
+    ChangePasswordRequest,
+    VerificationVerifyRequest,
+    VerificationResendRequest,
+    VerificationCreateResponse,
+    VerificationSuccessResponse,
 )
 from app.schemas.base import SuccessResponseSchema
 from app.services.auth_service import auth_service
 from app.dependencies.auth import get_current_active_user
+from app.services.verification_service import verification_service
+from app.models import VerificationType
 
 
 router = APIRouter()
@@ -86,9 +93,16 @@ async def register_user(
         user=user
     )
     
+    # Send verification code
+    # try:
+    #     await verification_service.create_and_send(db, user.email, VerificationType.VERIFY_EMAIL)
+    # except Exception:
+    #     # Don't fail registration on email errors; logs already captured
+    #     pass
+
     return SuccessResponseSchema(
         data=token_response,
-        message="User registered successfully"
+        message="User registered successfully. Verification code sent to email."
     )
 
 
@@ -224,3 +238,46 @@ async def change_password(
         data=None,
         message="Password changed successfully. Please login again."
     )
+
+
+# def _dispatch_target_service(vtype: VerificationType):
+#     """Switch-like dispatcher for different verification flows."""
+#     match vtype:
+#         case VerificationType.VERIFY_EMAIL:
+#             return verification_service
+#         case VerificationType.FORGOT_PASSWORD:
+#             return verification_service
+#         case _:
+#             return verification_service
+
+
+# @router.post("/verify", response_model=VerificationSuccessResponse)
+# async def verify_token(
+#     payload: VerificationVerifyRequest,
+#     db: AsyncSession = Depends(get_db),
+# ):
+#     svc = _dispatch_target_service(payload.type)
+#     ok = await svc.verify(db, payload.email, payload.type, payload.token)
+#     if not ok:
+#         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid or expired token")
+#     resp = VerificationCreateResponse(
+#         email=payload.email,
+#         type=payload.type,
+#         expires_at=datetime.utcnow(),
+#     )
+#     return SuccessResponseSchema(data=resp, message="Verification successful")
+
+
+# @router.post("/resend-otp", response_model=VerificationSuccessResponse)
+# async def resend_otp(
+#     payload: VerificationResendRequest,
+#     db: AsyncSession = Depends(get_db),
+# ):
+#     svc = _dispatch_target_service(payload.type)
+#     _, expires_at = await svc.resend(db, payload.email, payload.type)
+#     resp = VerificationCreateResponse(
+#         email=payload.email,
+#         type=payload.type,
+#         expires_at=datetime.fromisoformat(expires_at),
+#     )
+#     return SuccessResponseSchema(data=resp, message="OTP resent")

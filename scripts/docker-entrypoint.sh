@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # Docker entrypoint script for backend service
-# This script runs database migrations and initialization before starting the app
+# This script resets Alembic version, runs migrations, and starts the app
 
 set -e
 
 echo "Starting API Conference Backend..."
 
-# Wait for database to be ready (with better cloud database support)
+# Wait for database to be ready
 echo "Waiting for database to be ready..."
 max_attempts=30
 attempt=1
@@ -51,33 +51,53 @@ fi
 
 echo "✅ Database is ready!"
 
-# Run Alembic migrations
-echo "Running database migrations..."
+# Always wipe current alembic_version table
+echo "🔄 Resetting Alembic migration state in the database..."
+poetry run python - <<'EOF'
+import asyncio
+import asyncpg
+import os
+
+async def reset_alembic():
+    conn = await asyncpg.connect(os.environ['DATABASE_URL'])
+    try:
+        await conn.execute("DROP TABLE IF EXISTS alembic_version")
+        print("✅ alembic_version table dropped.")
+    except Exception as e:
+        print(f"⚠️ Could not drop alembic_version: {e}")
+    finally:
+        await conn.close()
+
+asyncio.run(reset_alembic())
+EOF
+
+# Generate a fresh migration
+echo "📜 Generating new migration..."
+poetry run alembic revision --autogenerate -m "Auto migration"
+
+# Apply migrations
+echo "🚀 Applying migrations..."
 poetry run alembic upgrade head
 
-# Check if database is initialized (check for roles table)
+# Check if database is initialized
 echo "Checking if database needs initialization..."
-ROLES_EXISTS=$(poetry run python -c "
+ROLES_EXISTS=$(poetry run python - <<'EOF'
 import asyncio
 import asyncpg
 import os
 import sys
 
 async def check_roles_table():
-    try:
-        conn = await asyncpg.connect(os.environ['DATABASE_URL'])
-        result = await conn.fetchval(
-            \"SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'roles')\"
-        )
-        await conn.close()
-        return result
-    except Exception as e:
-        print(f'Error checking roles table: {e}')
-        return False
+    conn = await asyncpg.connect(os.environ['DATABASE_URL'])
+    result = await conn.fetchval(
+        "SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'roles')"
+    )
+    await conn.close()
+    return result
 
-result = asyncio.run(check_roles_table())
-print('true' if result else 'false')
-")
+print('true' if asyncio.run(check_roles_table()) else 'false')
+EOF
+)
 
 if [ "$ROLES_EXISTS" = "false" ]; then
     echo "Database not initialized, running initialization script..."
