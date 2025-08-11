@@ -160,15 +160,15 @@ async def refresh_token(
     )
     user = result.scalar_one()
     
-    token_response = TokenResponse(
-        access_token=access_token,
-        refresh_token=refresh_token,
-        expires_in=auth_service.access_token_expire_minutes * 60,
-        user=user
-    )
+    # token_response = TokenResponse(
+    #     access_token=access_token,
+    #     refresh_token=refresh_token,
+    #     expires_in=auth_service.access_token_expire_minutes * 60,
+    #     user=user
+    # )
     
     return SuccessResponseSchema(
-        data=token_response,
+        data=user,
         message="Token refreshed successfully"
     )
 
