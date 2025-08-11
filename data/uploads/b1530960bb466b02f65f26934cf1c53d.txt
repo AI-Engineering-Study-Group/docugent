@@ -1,0 +1,341 @@
+ 
+ 
+ 
+ 
+ 
+Vienna Doctoral College on Digital 
+Humanism  
+Call for Applications 
+is seeking 
+5 PhD Candidates  
+(Part-time, 30 hours/week, Starting November 01, 2025, 1+3 years) 
+Digital technology profoundly shapes the world we live in by revolutionizing virtually all areas of 
+human life. Therefore, it is paramount to identify and mitigate any undesirable effects of the 
+currently ongoing digital transformation while also amplifying its positive impact on society. This 
+is the mission of Digital Humanism, which deals with digital technology development and 
+policies based on human rights, democracy, inclusion, and diversity.  
+The newly established Vienna Doctoral College on Digital Humanism invites applications from 
+outstanding candidates eager to shape the future of this emerging interdisciplinary field. The 
+Doctoral College is located across the TU Wien, University of Vienna, and WU Wien and its 
+doctoral candidates tackle critical societal challenges arising from digital transformation. The 
+Doctoral College offers a unique opportunity to conduct interdisciplinary research at the 
+intersection of Informatics and Social Sciences/Humanities. 
+What to Expect? 
+Our mission is to educate the next generation of interdisciplinary scholars working on the impact 
+digital technology has on society. The Vienna Doctoral College on Digital Humanism supports 
+PhD projects addressing vital topics such as the future of democracy, misinformation, and 
+ 
+ 
+Call for Applications, Page 2 
+ 
+privacy in a digital age, digital ecosystems, explainability in AI systems, systems respecting 
+human autonomy and facilitating human self-efficacy and inclusive user designs, or 
+strategies to foster AI adoption - applying interdisciplinary research methodologies. Our doctoral 
+candidates and supervisors co-design research projects that align with the College's vision and 
+the Digital Humanism Roadmap 2022. Doctoral candidates will gain in-depth specialization in 
+their chosen research areas while acquiring a broad understanding of methods and practices 
+across disciplines. The Doctoral College emphasizes good scientific practices, ethics, diversity, 
+and open science, preparing graduates for impactful careers in academia, industry, or public 
+policy.  
+Each doctoral candidate within the Doctoral College will be employed by one of the three Vienna 
+universities currently participating (TU Wien, University of Vienna, or WU Wien), and their 
+research projects will be supervised by a supervisory team spanning at least two of these 
+universities and at least two disciplines. Our supervisory teams include world-class experts on 
+behavioral decision-making, labour science, applied AI, computational social science, political 
+communication, IT and IP law, and ethics of AI.  
+We are currently looking for PhD candidates for the following research topics: 
+1.​ Interdisciplinary Approaches to User Modeling in Data-Driven Systems 
+This PhD project proposes a rethinking of user modeling in data science by developing 
+dynamic, context-aware, and interdisciplinary approaches that better reflect the complexity of 
+human behavior in digital environments. Current computational models often rely on inherited 
+assumptions from early psychological, communicative, or economic theories; assumptions that 
+portray users as static, isolated, and predictable. Although such frameworks are outdated, they 
+remain embedded within algorithms and system architectures, where they are rarely made 
+explicit and are silently propagated at scale. 
+By drawing on insights from the social sciences and humanities, this research enriches core 
+data science methods, such as machine learning, natural language processing, and network 
+analysis, with more nuanced understandings of human interaction, communication practices, 
+and social context. The project aims to expose and critique the hidden theoretical legacies 
+within existing models while constructing alternatives that are flexible, adaptive, and better 
+aligned with real-world behavior. 
+Through applied studies in areas such as social platforms, recommender systems, and 
+interactive technologies, the project shows how interdisciplinary, value-aware modeling can lead 
+to both improved system performance and more responsible representations of users. 
+Ultimately, it contributes to the development of a new generation of user models that advance 
+current practice in data science while supporting more transparent, accountable, and 
+human-centered system design, aligned with the principles of Digital Humanism. 
+ 
+ 
+Call for Applications, Page 3 
+ 
+This project is supervised by faculty at TU Wien, WU Wien, and University of Vienna. 
+2.​ Navigating Heat: Sensor-Based Wayfinding Strategies in Public Spaces Under 
+Variable Thermal and Weather Conditions  
+As climate change intensifies, extreme weather conditions—such as heatwaves, high humidity, 
+and sudden thermal shifts—pose increasing challenges for safe and comfortable navigation in 
+both indoor and outdoor public spaces. This PhD project explores how thermal comfort and 
+environmental stress influence wayfinding behavior, and how smart architectural environments 
+can support adaptive navigation through data-informed spatial cues and digital guidance 
+systems. Using wearable and environmental sensors to monitor physiological responses (e.g., 
+skin temperature, heart rate variability) alongside environmental factors (e.g., radiant heat, air 
+temperature, solar exposure), the research will identify how people adjust their movement and 
+spatial decisions under thermal and climatic stress. 
+The project will design and test adaptive wayfinding interventions, such as mobile navigation 
+tools, that guide users toward more thermally comfortable and sheltered paths during extreme 
+weather events. Combining architectural design, behavioral science, and digital technology, the 
+project aims to inform resilient, inclusive, and climate-adaptive strategies for building complexes, 
+courtyards, and other shared public environments. 
+The PhD candidate will work closely with the newly founded DataScape Lab at TU Wien, 
+utilizing its infrastructure for real-time environmental sensing, spatial analysis, and data 
+visualization. This interdisciplinary collaboration will support the development of evidence-based 
+tools and prototypes that enhance both comfort and safety in the built environment under 
+climate stress. 
+This project supports vulnerable groups by enhancing thermal comfort and safe navigation in 
+public spaces during extreme weather conditions. Individuals such as older adults, children, 
+migrants, and those with health or psychological sensitivities are more affected by thermal 
+stress, which can impair mobility and decision-making. Sensor-based, language-independent 
+wayfinding tools will offer intuitive, accessible guidance to help users avoid uncomfortable or 
+unsafe areas. By integrating diverse physiological data and participatory design, the project 
+enables inclusive, adaptive spatial solutions tailored to varying user needs. 
+This project is supervised by faculty at TU Wien and WU Wien. 
+3.​ Communicating AI:  Knowledge Structures and Sensemaking Tools for Critical 
+Engagement 
+As AI systems become ubiquitous in many areas of life, including education and work, it is 
+essential that they are better understood by a variety of stakeholders. This includes different 
+types of end-users in different arenas, such as AI engineers that create those systems, 
+ 
+ 
+Call for Applications, Page 4 
+ 
+managers that deal with the embedding of AI systems in their organisations, educators or 
+trainers in various domains, or non-expert audiences. For these, technical knowledge about AI 
+technologies and related regulations (e.g., EU AI Act) is increasingly important. Such knowledge 
+also includes critical reflection on and healthy scepticism towards the outputs of AI systems, 
+including knowledge of limitations and biases. 
+ A key challenge lies in how to efficiently and effectively equip these stakeholders to acquire 
+(subsets of) the knowledge that they require for performing their various tasks. In this thesis, the 
+aim is to explore various methods for AI knowledge communication and co-production relying on 
+formal knowledge representation (to represent different expertise levels) and advanced visual 
+interactions. We will test the effectiveness of such methods with an explicit focus on critical 
+evaluation. Through this we aim to foster critical interaction with AI systems and a better 
+understanding of human agency when working with AI. 
+This project is supervised by faculty at WU Wien and University of Vienna.  
+4.​ Legal Frameworks vs. Technological Realities  
+As digital technologies evolve at an unprecedented pace, legal and regulatory frameworks often 
+struggle to keep up, creating tensions between promoting innovation, security demand, and 
+safeguarding privacy and other fundamental rights. A key challenge lies in regulatory 
+enforcement, which often faces structural limitations such as jurisdictional constraints, 
+institutional capacity gaps, and the technical complexity of emerging technologies. Even the 
+most thoughtfully designed privacy and security regulations often fall short due to weak 
+enforcement mechanisms, inconsistent application, and insufficient penalties to ensure 
+compliance.  
+This interdisciplinary project seeks to address these challenges by exploring the dynamic 
+relationship between legal frameworks, regulatory strategies, and technology development. 
+Using comparative legal analysis, case studies, and other empirical research, this project will 
+identify governance models that effectively balance security imperatives with privacy protections 
+across different jurisdictions and technological contexts. It will also propose practical 
+enforcement strategies to bridge the gap between regulatory aspirations and real-world 
+constraints and outcomes, offering innovative approaches to compliance monitoring in an era 
+where traditional methods are increasingly inadequate. 
+This project is supervised by faculty at University of Vienna and TU Wien.  
+5.​ Affordances of Open Science Infrastructures 
+Data sharing is central to contemporary science. As support for data sharing, visiting, and 
+re-use has grown, a range of new forms of research infrastructure has emerged, from university 
+depositories to public and private data- and knowledge bases. This project will critically examine 
+ 
+ 
+Call for Applications, Page 5 
+ 
+this landscape, exploring what kinds of data sharing and re-use practices are afforded by 
+different models for open science. It will lay the groundwork for novel approaches to 
+documenting data as a process to cater to the diversity of inter- and cross-disciplinary data 
+needs. Merging computer science and qualitative and quantitative social science methods, it will 
+(1) explore the conceptual data models that underpin different infrastructures and how this 
+affects data discovery, use and interpretation; (2) examine the logics and practices of different 
+infrastructures and how these relate to imaginations of data sharing; (3) work to make 
+recommendations regarding best practice in developing research infrastructures that aid open 
+science. 
+This project is supervised by faculty at University of Vienna and TU Wien. 
+Your Qualification Profile 
+All doctoral candidates are expected to have the following qualifications as part of their profile:  
+●​ Strong interest in interdisciplinary research at the intersection of technology and society. 
+●​ Ability to work independently and as part of a research team in a collaborative 
+environment. 
+●​ Proven ability to manage complex projects, prioritize tasks, and meet deadlines. 
+●​ Excellent verbal communication skills for interdisciplinary collaboration and presenting 
+research findings. 
+●​ Excellent English skills, both written and spoken. 
+In addition, the following specific requirements apply for those interested in the current call for 
+applications:  
+# 
+Topic Name 
+Your Profile 
+1 
+Interdisciplinary 
+Approaches to User 
+Modeling 
+●​ Relevant Master’s degree (e.g., Computer Science/Informatics, 
+Data Science, Business Informatics, Human-Computer 
+Interaction, Computational Social Science or related 
+disciplines) 
+●​ Desired: Knowledge of machine learning, experimental design, 
+statistical analysis, and hypothesis testing, with experience in 
+programming languages such as Python or R 
+●​ Knowledge of OR interest in these areas: 
+○​ computational user modelling, personalization techniques, 
+and/or recommender systems 
+○​ theories and models of social science and society impact of 
+technology  
+○​ user research and quantitative/qualitative social science 
+research methods (e.g., experimental economics, media 
+effects research, political behaviour) 
+ 
+ 
+Call for Applications, Page 6 
+ 
+2 
+Navigating Heat 
+●​ Relevant Master’s degree e.g., Architecture, Human-Computer 
+Interaction, Data Science, Environmental Psychology, 
+Informatics, Urban Studies, or related disciplines. 
+●​ High interest in pursuing interdisciplinary work combining 
+architectural design, behavioral science, and digital 
+technologies. 
+●​ Experience in programming and statistical analysis is a plus. 
+●​ Knowledge of OR interest to learn new skills in these areas: 
+○​ Human-computer interaction; 
+○​ Spatial data analysis and visualization; 
+○​ Knowledge representation and ontologies; 
+○​ Quantitative analysis (e.g., physiological/environmental 
+sensor data); 
+○​ Qualitative analysis (e.g., user behaviour, interviews); 
+○​ Interdisciplinary and mixed-methods research; 
+○​ Adaptive systems and smart environments; 
+○​ Openness to learn research methods from architecture, 
+computer science, and behavioural sciences. 
+●​ Good communication skills and willingness to collaborate in a 
+diverse research team. 
+3 
+Communicating AI 
+●​ Relevant Master’s degree e.g., Science and Technology 
+Studies, Computer Science/Informatics, HCI, Data Science, 
+Information Science, Information Systems, Management 
+Science or related disciplines. 
+●​ High interest in pursuing interdisciplinary work.  
+●​ Experience in programming and statistical analysis is a plus. 
+●​ Knowledge of OR interest to learn new skills in these areas: 
+○​ Knowledge representation;  
+○​ Ontologies; 
+○​ Human-computer interaction; 
+○​ Quantitative analysis; 
+○​ Qualitative analysis; 
+○​ Interdisciplinary and mixed-methods research. 
+●​ Openness to learn research methods from several disciplines. 
+●​ Good communication skills. 
+4 
+Legal Frameworks 
+vs. Technological 
+Realities 
+●​ Relevant Master’s degree or Diploma in Law or a related 
+subject that allows registration in a Law Faculty doctoral 
+programme at the University of Vienna, for example in the 
+doctoral programme Interdisciplinary Legal Studies. 
+●​ Desired: The ideal candidate will have a background that 
+combines Law with Computer Science. Experience in 
+programming, statistical analysis and legal research is a plus. 
+●​ Knowledge of OR interest in these areas: 
+○​ Knowledge of EU legal acts relating to digitalisation 
+(GDPR, AI Act, DGA, DA, DMA, DSA, …); 
+ 
+ 
+Call for Applications, Page 7 
+ 
+○​ Interdisciplinary and mixed-methods research; 
+○​ Security, privacy, and data protection. 
+5 
+Affordances of 
+Open Science 
+Infrastructures  
+●​ Relevant Master’s degree (e.g. Science and Technology 
+Studies, Computer Science/Informatics, HCI, Data Science, 
+Information Science, or related disciplines) with evidence or 
+experience of interdisciplinary work.  
+●​ Desired: Ideally, candidates will have a background that 
+combines computer science and social science training, with 
+experience of the key methods of these fields (e.g. 
+programming, statistical analysis, interviewing, ethnography). 
+●​ Knowledge of OR interest in these areas: 
+○​ Critical data studies; 
+○​ Interdisciplinary and mixed-methods research; 
+○​ Data and research infrastructures; 
+○​ Open science; 
+○​ Human-Centred Design. 
+ 
+What we offer 
+The Doctoral College serves as a hub for Digital Humanism research, promoting a strong 
+scholarly community in Vienna. Collaboration is supported by innovative strategies, including 
+interdisciplinary supervision, shared working spaces, and regular seminars featuring 
+international experts. 
+●​ Truly interdisciplinary work environment, defined by an interdisciplinary faculty 
+across three top universities, as well as doctoral projects that are supervised and 
+conducted across disciplines and institutions.  
+●​ Further training & Coaching: Opportunity to deepen your skills on an ongoing basis. 
+The Doctoral College will offer all candidates a bespoke doctoral training plan.  
+●​ Fair salary: The monthly gross salary is EUR 2,786.10 14 times/year for 30 hours/week 
+(corresponding to 75% of a full position). 
+●​ Inspiring working atmosphere: You are a part of an interdisciplinary and international 
+academic team in a healthy and fair working environment.  
+●​ Work-life balance: Employees at the host institutions enjoy flexible working hours and 
+can partially work remotely.  
+●​ Good public transport connections: Your workplace is easily accessible by public 
+transport. 
+●​ Equal opportunities for all: We welcome every additional/new personality to the team 
+ 
+ 
+ 
+Call for Applications, Page 8 
+ 
+Do you want to join the Vienna Doctoral College on Digital 
+Humanism?  
+Join us in shaping Digital Humanism, addressing societal challenges of the digital era, and 
+establishing Vienna as a global center for interdisciplinary research. Applications are welcome 
+from candidates with diverse academic backgrounds who are ready to contribute to this 
+transformative initiative.  
+Please submit your application through the respective university’s job portal by August 31st, 
+2025 using the following links: 
+Topic 1 - TU Wien - Interdisciplinary Approaches to User Modeling (Job portal link coming soon!) 
+Topic 2 - TU Wien - Navigating Heat (Job portal link coming soon!) 
+Topic 3 - WU Wien - Communicating AI 
+Topic 4 - University of Vienna - Legal Frameworks vs. Technological Realities 
+Topic 5 - University of Vienna - Affordances of Open Science Infrastructures  
+Important: If you want to apply for more than one topic, you have to hand in a separate 
+application for each. In this case, please indicate which topics you apply for and include a 
+preference ranking in your letter of motivation. 
+The following documents must be submitted (in English) in your application:  
+●​ Letter of motivation (detailing previous research achievements, research goals, career 
+plans, motivation for applying, and to what extent your profile covers the expectations of 
+the research topic of the position). Important: If you are applying for more than one 
+topic, please clearly specify all topics you apply for and include a preference ranking 
+in your letter of motivation. 
+●​ A complete CV, including a list of previous scientific expertise, awards, grants, stays 
+abroad, attended lectures, attended summer schools, attended workshops, skills, and 
+publications (if applicable). 
+●​ Abstract in English of your MA/MSc thesis, BA/BSc thesis, or of a research project you 
+were involved in. 
+●​ A complete list of finalised studies and transcripts of all grades; 
+●​ 1-2 names of academic references and their contact addresses (e.g., your Master’s 
+thesis supervisor). 
+●​ Any other material you think is relevant. 
+We expect interviews will be held online in September, 2025. 
+ 
+ 
+Call for Applications, Page 9 
+ 
+If you have any questions, please contact the coordinators of the Doctoral College, Peter Knees 
+(TU Wien), Sophie Lecheler (University of Vienna) and Marta Sabou (WU Wien) using the 
+Doctoral College email address: dighum-dc@ec.tuwien.ac.at 
+For more information on the Vienna Doctoral College on Digital Humanism, please visit our 
+website www.dighumcollege.at. 
+ 
+ 
+ 

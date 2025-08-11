@@ -1,5 +1,6 @@
 import Chat from './components/Chat';
 import Sidebar from './components/Sidebar';
+import LiteratureReview from './components/LiteratureReview';
 import styles from './App.module.css';
 import { useState } from 'react';
 
@@ -20,7 +21,7 @@ const SettingsComponent = () => <div>Settings view coming soon.</div>;
 
 const App: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [view, setView] = useState<'chat' | 'settings'>('chat'); // Simplified view
+  const [view, setView] = useState<'chat' | 'settings' | 'literature'>('chat');
   const [resetSignal, setResetSignal] = useState(0);
 
   const toggleSidebar = () => {
@@ -59,10 +60,13 @@ const App: React.FC = () => {
         onNewChat={handleNewChat}
         onRestoreSession={handleRestoreSession}
         activeSessionId={activeSessionId}
+        onViewChange={setView}
+        currentView={view}
       />
       <main>
         {view === 'chat' && <Chat onMenuClick={toggleSidebar} resetSignal={resetSignal} />}
         {view === 'settings' && <SettingsComponent />}
+        {view === 'literature' && <LiteratureReview />}
       </main>
     </div>
   );

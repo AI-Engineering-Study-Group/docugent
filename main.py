@@ -12,6 +12,7 @@ import uvicorn
 from app.config.logger import Logger
 from app.config.settings import settings
 from app.api.v1.agents_router import router as agents_router
+from app.api.v1.literature_router import router as literature_router
 
 # Setup logging
 Logger.setup_root_logger()
@@ -55,6 +56,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(agents_router, prefix="/api/v1/agents", tags=["agents"])
+app.include_router(literature_router, prefix="/api/v1/literature", tags=["literature"])
 
 @app.get("/")
 async def root():
