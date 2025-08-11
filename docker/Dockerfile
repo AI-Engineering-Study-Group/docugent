@@ -1,14 +1,16 @@
 # Multi-stage Dockerfile for API Conference Agent
 # Stage 1: Base image with all dependencies
-FROM python:3.13-slim as base
+FROM python:3.10-slim as base
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-ENV POETRY_VERSION=1.8.3
+ENV POETRY_VERSION=2.1.4
 ENV POETRY_HOME=/opt/poetry
 ENV POETRY_NO_INTERACTION=1
 ENV POETRY_VIRTUALENVS_IN_PROJECT=true
+ENV POETRY_CACHE_DIR=/tmp/poetry_cache
+ENV PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring
 ENV PATH="$POETRY_HOME/bin:$PATH"
 
 # Install system dependencies
@@ -34,6 +36,8 @@ COPY app/ ./app/
 COPY main.py .
 COPY data/ ./data/
 COPY scripts/ ./scripts/
+COPY alembic/ ./alembic/
+COPY alembic.ini .
 
 # Add the app directory to the Python path
 ENV PYTHONPATH="${PYTHONPATH}:/app"
@@ -44,8 +48,11 @@ FROM base as backend
 # Expose the port the app runs on
 EXPOSE 8000
 
-# Command to run the backend application
-CMD ["poetry", "run", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Make entrypoint script executable
+RUN chmod +x /app/scripts/docker-entrypoint.sh
+
+# Use entrypoint script that handles DB initialization
+ENTRYPOINT ["/app/scripts/docker-entrypoint.sh"]
 
 # Stage 3: CSV Updater service
 FROM base as csv-updater

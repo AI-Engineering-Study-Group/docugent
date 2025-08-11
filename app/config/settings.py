@@ -48,7 +48,9 @@ class Settings(BaseSettings):
     
     # Security
     secret_key: str = Field(..., env="SECRET_KEY")
+    jwt_algorithm: str = Field("HS256", env="JWT_ALGORITHM")
     access_token_expire_minutes: int = Field(30, env="ACCESS_TOKEN_EXPIRE_MINUTES")
+    refresh_token_expire_days: int = Field(7, env="REFRESH_TOKEN_EXPIRE_DAYS")
     
     @field_validator("cors_origins", mode="before")
     @classmethod
