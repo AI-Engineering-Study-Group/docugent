@@ -11,10 +11,11 @@ services:
       - apiconf-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/agents/health"]
-      interval: 20s
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/api/v1/agents/health"]
+      interval: 10s
       timeout: 10s
-      retries: 3
+      retries: 10
+      start_period: 60s
     volumes:
       - ./data:/app/data
 

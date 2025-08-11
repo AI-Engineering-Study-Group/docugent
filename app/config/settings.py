@@ -48,7 +48,22 @@ class Settings(BaseSettings):
     
     # Security
     secret_key: str = Field(..., env="SECRET_KEY")
+    jwt_algorithm: str = Field("HS256", env="JWT_ALGORITHM")
     access_token_expire_minutes: int = Field(30, env="ACCESS_TOKEN_EXPIRE_MINUTES")
+    refresh_token_expire_days: int = Field(7, env="REFRESH_TOKEN_EXPIRE_DAYS")
+
+    # Email (SMTP) Settings
+    smtp_host: str = Field("localhost", env="MAIL_HOST")
+    smtp_port: int = Field(1025, env="MAIL_PORT")
+    smtp_username: str | None = Field(None, env="MAIL_USERNAME")
+    smtp_password: str | None = Field(None, env="MAIL_PASSWORD")
+    smtp_use_tls: bool = Field(False, env="MAIL_USE_TLS")
+    smtp_use_ssl: bool = Field(False, env="MAIL_USE_SSL")
+    mail_from: str = Field("no-reply@apiconf.ng", env="MAIL_FROM")
+    mail_from_name: str = Field("APIConf", env="MAIL_FROM_NAME")
+
+    # OTP/Verification
+    otp_expire_minutes: int = Field(10, env="OTP_EXPIRE_MINUTES")
     
     @field_validator("cors_origins", mode="before")
     @classmethod

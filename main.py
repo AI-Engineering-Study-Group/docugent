@@ -12,6 +12,9 @@ import uvicorn
 from app.config.logger import Logger
 from app.config.settings import settings
 from app.api.v1.agents_router import router as agents_router
+from app.api.v1.auth_router import router as auth_router
+from app.api.v1.roles_router import router as roles_router
+from app.api.v1.users_router import router as users_router
 
 # Setup logging
 Logger.setup_root_logger()
@@ -55,6 +58,9 @@ app.add_middleware(
 
 # Include routers
 app.include_router(agents_router, prefix="/api/v1/agents", tags=["agents"])
+app.include_router(auth_router, prefix="/api/v1/auth", tags=["authentication"])
+app.include_router(roles_router, prefix="/api/v1/roles", tags=["roles"])
+app.include_router(users_router, prefix="/api/v1/users", tags=["users"])
 
 @app.get("/")
 async def root():
