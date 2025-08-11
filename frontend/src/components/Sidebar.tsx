@@ -14,9 +14,11 @@ interface SidebarProps {
   onNewChat: () => void;
   onRestoreSession: (sessionId: string) => void;
   activeSessionId: string | null;
+  onViewChange: (view: 'chat' | 'settings' | 'literature') => void;
+  currentView: 'chat' | 'settings' | 'literature';
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onNewChat, onRestoreSession, activeSessionId }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onNewChat, onRestoreSession, activeSessionId, onViewChange, currentView }) => {
   const [history, setHistory] = useState<HistoryItem[]>([]);
 
   useEffect(() => {
@@ -46,6 +48,28 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onNewChat, onRestore
           <FiPlus />
           New Chat
         </button>
+
+        <div className={styles.navigationContainer}>
+          <h3>Navigation</h3>
+          <button 
+            className={`${styles.navButton} ${currentView === 'chat' ? styles.active : ''}`}
+            onClick={() => onViewChange('chat')}
+          >
+            💬 Chat
+          </button>
+          <button 
+            className={`${styles.navButton} ${currentView === 'literature' ? styles.active : ''}`}
+            onClick={() => onViewChange('literature')}
+          >
+            📚 Literature Review
+          </button>
+          <button 
+            className={`${styles.navButton} ${currentView === 'settings' ? styles.active : ''}`}
+            onClick={() => onViewChange('settings')}
+          >
+            ⚙️ Settings
+          </button>
+        </div>
 
         <div className={styles.recentChatsContainer}>
           <h3>Recent Chats</h3>

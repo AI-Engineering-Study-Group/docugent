@@ -15,6 +15,8 @@ services:
       interval: 20s
       timeout: 10s
       retries: 3
+    ports:
+      - "8000:8000"
     volumes:
       - ./data:/app/data
 

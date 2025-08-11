@@ -1,0 +1,505 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
+.title {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 30px;
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+.section {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e1e8ed;
+}
+
+.section h3 {
+  color: #34495e;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Upload Section */
+.uploadArea {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.fileInput {
+  flex: 1;
+  padding: 12px;
+  border: 2px dashed #3498db;
+  border-radius: 8px;
+  background: #f8f9fa;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.fileInput:hover {
+  border-color: #2980b9;
+  background: #ecf0f1;
+}
+
+.uploadButton {
+  padding: 12px 24px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.uploadButton:hover:not(:disabled) {
+  background: #2980b9;
+}
+
+.uploadButton:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.fileInfo {
+  color: #27ae60;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* PDF List Section */
+.pdfList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.emptyState {
+  text-align: center;
+  color: #7f8c8d;
+  font-style: italic;
+  padding: 40px;
+}
+
+.pdfItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border: 1px solid #e1e8ed;
+  border-radius: 8px;
+  background: #f8f9fa;
+  transition: all 0.3s ease;
+}
+
+.pdfItem:hover {
+  border-color: #3498db;
+  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.1);
+}
+
+.pdfInfo h4 {
+  margin: 0 0 8px 0;
+  color: #2c3e50;
+  font-size: 1.1rem;
+}
+
+.pdfInfo p {
+  margin: 4px 0;
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+.pdfActions {
+  display: flex;
+  gap: 8px;
+}
+
+.selectButton {
+  padding: 8px 16px;
+  background: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.3s ease;
+}
+
+.selectButton:hover {
+  background: #229954;
+}
+
+.selectButton.selected {
+  background: #f39c12;
+  color: white;
+  font-weight: 600;
+}
+
+.selectButton.selected:hover {
+  background: #e67e22;
+}
+
+.deleteButton {
+  padding: 8px 16px;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.3s ease;
+}
+
+.deleteButton:hover {
+  background: #c0392b;
+}
+
+/* Search Section */
+.searchArea {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.searchInput {
+  flex: 1;
+  padding: 12px;
+  border: 2px solid #e1e8ed;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.searchButton {
+  padding: 12px 24px;
+  background: #9b59b6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.searchButton:hover:not(:disabled) {
+  background: #8e44ad;
+}
+
+.searchButton:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.searchResults {
+  margin-top: 20px;
+}
+
+.searchResults h4 {
+  color: #2c3e50;
+  margin-bottom: 16px;
+}
+
+.searchResult {
+  margin-bottom: 20px;
+  padding: 16px;
+  border: 1px solid #e1e8ed;
+  border-radius: 8px;
+  background: #f8f9fa;
+}
+
+.searchResult h5 {
+  color: #34495e;
+  margin: 0 0 12px 0;
+  font-size: 1.1rem;
+}
+
+.match {
+  margin-bottom: 8px;
+  padding: 8px;
+  background: white;
+  border-radius: 4px;
+  border-left: 4px solid #3498db;
+}
+
+.match p {
+  margin: 0;
+  color: #2c3e50;
+  line-height: 1.5;
+}
+
+/* Q&A Modal */
+.qaModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.qaModalContent {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  max-width: 800px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.qaModalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #e1e8ed;
+}
+
+.qaModalTitle {
+  color: #2c3e50;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.closeButton {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease;
+}
+
+.closeButton:hover {
+  background: #c0392b;
+}
+
+/* Q&A Section */
+.qaArea {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.questionInput {
+  padding: 12px;
+  border: 2px solid #e1e8ed;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.3s ease;
+}
+
+.questionInput:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.askButton {
+  padding: 12px 24px;
+  background: #f39c12;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease;
+  align-self: flex-start;
+}
+
+.askButton:hover:not(:disabled) {
+  background: #e67e22;
+}
+
+.askButton:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.answerArea {
+  margin-top: 20px;
+  margin-bottom: 40px;
+  padding: 20px;
+  background: #ecf0f1;
+  border-radius: 8px;
+  border-left: 4px solid #f39c12;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.answerArea h4 {
+  color: #2c3e50;
+  margin: 0 0 12px 0;
+}
+
+.answer {
+  color: #34495e;
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+.answerMetadata {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e1e8ed;
+}
+
+.confidenceBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.confidenceBar span {
+  font-weight: 600;
+  color: #2c3e50;
+  min-width: 120px;
+}
+
+.confidenceMeter {
+  flex: 1;
+  height: 8px;
+  background: #ecf0f1;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.confidenceFill {
+  height: 100%;
+  background: linear-gradient(90deg, #e74c3c, #f39c12, #27ae60);
+  transition: width 0.3s ease;
+}
+
+.sourcesSection {
+  margin-top: 20px;
+}
+
+.sourcesSection h5 {
+  color: #2c3e50;
+  margin: 0 0 12px 0;
+  font-size: 1rem;
+}
+
+.sourceItem {
+  margin-bottom: 12px;
+  padding: 12px;
+  background: white;
+  border-radius: 6px;
+  border-left: 3px solid #3498db;
+}
+
+.sourceHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.pageNumber {
+  font-weight: 600;
+  color: #3498db;
+  font-size: 0.9rem;
+}
+
+.similarity {
+  font-size: 0.8rem;
+  color: #7f8c8d;
+  background: #f8f9fa;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.sourceContent {
+  color: #34495e;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  font-style: italic;
+}
+
+.processingInfo {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #ecf0f1;
+  text-align: center;
+}
+
+.processingInfo small {
+  color: #7f8c8d;
+  font-size: 0.8rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+  
+  .title {
+    font-size: 2rem;
+  }
+  
+  .uploadArea {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .pdfItem {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  
+  .pdfActions {
+    justify-content: center;
+  }
+  
+  .searchArea {
+    flex-direction: column;
+  }
+  
+  .qaArea {
+    align-items: stretch;
+  }
+  
+  .askButton {
+    align-self: stretch;
+  }
+}

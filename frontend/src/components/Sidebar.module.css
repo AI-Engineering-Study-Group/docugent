@@ -45,6 +45,46 @@
   background-color: rgb(37, 25, 151);
 }
 
+.navigationContainer {
+  margin-bottom: 24px;
+  padding: 0 1rem;
+}
+
+.navigationContainer h3 {
+  font-size: 0.875rem;
+  color: #6b7280;
+  padding: 0 0.5rem 0.5rem;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.navButton {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+  color: #333;
+  transition: background-color 0.2s, color 0.2s;
+  text-align: left;
+}
+
+.navButton:hover {
+  background-color: #e9eef5;
+}
+
+.navButton.active {
+  background-color: #e1ef9a;
+  color: #334155;
+  font-weight: 600;
+}
+
 .nav {
   display: flex;
   flex-direction: column;

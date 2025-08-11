@@ -1,0 +1,7 @@
+---------------------------------------------
+1. Create automated literature reviews. 
+2. Implement research question answering. 
+3. Build research pipeline automation. 
+4. Advanced research tools.
+---------------------------------------------
+

@@ -28,6 +28,10 @@ asyncpg = "^0.30.0"
 alembic = "^1.15.2"
 httpx = "^0.28.1"
 lxml = "^5.2.0"
+PyMuPDF = "^1.24.0"
+PyPDF2 = "^3.0.1"
+Pillow = "^10.0.0"
+numpy = "^1.24.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.0"

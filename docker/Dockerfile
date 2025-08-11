@@ -15,6 +15,9 @@ ENV PATH="$POETRY_HOME/bin:$PATH"
 RUN apt-get update && apt-get install -y \
     curl \
     cron \
+    build-essential \
+    gcc \
+    g++ \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Poetry
